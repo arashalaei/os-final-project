@@ -89,3 +89,13 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+/*
+** @author Arash Alaei <arashalaei22@gmail.com>
+** @since Saturday, January 30, 2021
+** @description Implement a system call that returns parnet process ID.
+*/
+int
+sys_getparentpid(void){
+  return myproc()->parent->pid;
+}
