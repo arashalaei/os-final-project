@@ -7,14 +7,18 @@
 ** @description this program tests getparentpid system call.
 */
 int main(void){
-  printf(1,"This is process %d and the parent id is %d\n",getpid(),getparentpid());
-  fork();
-  printf(1,"This is process %d and the parent id is %d\n",getpid(),getparentpid());
+  if(fork() > 0)
+    sleep(10);
   if(fork() == 0){
-    printf(1,"This is process %d and the parent id is %d\n",getpid(),getparentpid());
-  }else{
-    printf(1,"This is process %d and the parent id is %d\n",getpid(),getparentpid());
+    sleep(10);
+    if(fork() > 0){
+      sleep(10);
+      printf(1,"This is process %d and the parent id is %d\n",getpid(),getparentpid()); 
+      wait();
+    }
   }
   printf(1,"This is process %d and the parent id is %d\n",getpid(),getparentpid());
+  wait();
+  wait();
   exit();
 }
