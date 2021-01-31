@@ -32,3 +32,4 @@ SYSCALL(uptime)
 
 SYSCALL(getparentpid)
 SYSCALL(getSyscallCounter)
+SYSCALL(getChildren)

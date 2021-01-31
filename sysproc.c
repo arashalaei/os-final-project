@@ -111,3 +111,15 @@ sys_getSyscallCounter(void){
   argint(0,&n);
   return myproc()->sysCallCounter[n];
 }
+
+/*
+** @author Arash Alaei <arashalaei22@gmail.com>
+** @since Monday, February 1, 2021
+** @description Implement a system call that returns the children of process.
+*/
+int
+sys_getChildren(void){
+  int PID;
+  argint(0,&PID);
+  return get_children(PID);
+}

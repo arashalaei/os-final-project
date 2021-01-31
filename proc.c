@@ -534,3 +534,25 @@ procdump(void)
     cprintf("\n");
   }
 }
+/*
+** @author Arash Alaei <arashalaei22@gmail.com>
+** @since Monday, February 1, 2021
+** @description Implement a function that returns the children of process as a digits number.
+*/
+int
+get_children(int PID){
+  int children = 0;
+  acquire(&ptable.lock);
+  for(struct proc *p = ptable.proc ; p < &ptable.proc[NPROC] ; p++){
+    if(p->parent->pid == PID){
+      if(p->pid >= 10)
+        children *= 100;
+      else
+        children *= 10;
+
+      children = children + p->pid;
+    }
+  }
+  release(&ptable.lock);
+  return children;
+}
