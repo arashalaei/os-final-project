@@ -20,4 +20,6 @@
 #define SYS_link   19
 #define SYS_mkdir  20
 #define SYS_close  21
+// Our defines
 #define SYS_getparentpid 22
+#define SYS_getSyscallCounter 23

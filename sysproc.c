@@ -99,3 +99,15 @@ int
 sys_getparentpid(void){
   return myproc()->parent->pid;
 }
+
+/*
+** @author Arash Alaei <arashalaei22@gmail.com>
+** @since Suday, January 31, 2021
+** @description Implement a system call that returns the numbert of system calls.
+*/
+int
+sys_getSyscallCounter(void){
+  int n;
+  argint(0,&n);
+  return myproc()->sysCallCounter[n];
+}

@@ -25,6 +25,7 @@ int sleep(int);
 int uptime(void);
 // Our system call ⬇️
 int getparentpid(void); 
+int getSyscallCounter(int);
 
 // ulib.c
 int stat(const char*, struct stat*);

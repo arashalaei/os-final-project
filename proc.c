@@ -112,6 +112,8 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+  for(int i = 0 ; i < NO_SYSCALL ; i++)
+    p->sysCallCounter[i] = 0;
   return p;
 }
 
