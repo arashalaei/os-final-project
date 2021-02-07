@@ -342,6 +342,11 @@ scheduler(void)
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
       c->proc = p;
+
+      // *** Our implementation ***
+      p->ticksPassed = 0;
+      //---------------------------
+      
       switchuvm(p);
       p->state = RUNNING;
 
@@ -387,10 +392,17 @@ sched(void)
 void
 yield(void)
 {
-  acquire(&ptable.lock);  //DOC: yieldlock
-  myproc()->state = RUNNABLE;
-  sched();
-  release(&ptable.lock);
+  // *** Our implementation ***
+  myproc()->ticksPassed++;
+  // if ticksPassed larger than time slot then context-switch is needed
+  if(myproc()->ticksPassed > QUANTUM){
+    myproc()->ticksPassed = 0; // Set to zero after context-switch
+  //---------------------------
+    acquire(&ptable.lock);  //DOC: yieldlock
+    myproc()->state = RUNNABLE;
+    sched();
+    release(&ptable.lock);
+  }
 }
 
 // A fork child's very first scheduling by scheduler()

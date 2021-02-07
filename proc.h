@@ -55,6 +55,7 @@ struct proc {
 
   // Our property
   int sysCallCounter[NO_SYSCALL]; // An array to store the number of system calls
+  int ticksPassed;  // Number of ticks hit so far
 };
 
 // Process memory is laid out contiguously, low addresses first:
