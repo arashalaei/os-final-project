@@ -89,6 +89,29 @@ found:
   p->state = EMBRYO;
   p->pid = nextpid++;
 
+// *** Our implementation ***
+  p->priority = 3; // Default process priority
+
+  struct proc *pro; // Process counter variable 
+	int minPriority;  // To update process module
+  int flag = 0;     // Helper variable to indicate 
+
+  for(pro = ptable.proc; pro < &ptable.proc[NPROC]; pro++){
+    if((pro->state == SLEEPING) || pro->state == RUNNABLE || pro->state == RUNNING){
+      if(pro->priorityModule > 0 && pro->priorityModule < MIN_MODULO){ //  0 < priorityModule < MIN_MODULO
+				minPriority = pro->priorityModule;
+				flag = 1;
+      }
+    }
+  }
+
+	if(flag == 0){
+		p->priorityModule = 0;
+  }else{ 
+		p->priorityModule = minPriority;
+	}
+  //---------------------------
+
   release(&ptable.lock);
 
   // Allocate kernel stack.
@@ -112,8 +135,12 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+  // *** Our implementation ***
+  // Initialize the number of each system calls
   for(int i = 0 ; i < NO_SYSCALL ; i++)
     p->sysCallCounter[i] = 0;
+  //---------------------------
+
   return p;
 }
 
@@ -338,24 +365,30 @@ scheduler(void)
       if(p->state != RUNNABLE)
         continue;
 
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      c->proc = p;
-
       // *** Our implementation ***
-      p->ticksPassed = 0;
+      struct proc *HPP = p; // High Priority Process.
+      // Higher priority must be selected.
+      for(struct proc *pro = ptable.proc; pro < &ptable.proc[NPROC]; pro++){
+        if(pro->state != RUNNABLE)
+          continue;
+        if( HPP->priorityModule > pro->priorityModule  ) 
+          HPP = pro;
+      }
+      p = HPP;
+      // After each quantum, the algorithm updates the current priorityModule 
+      // as priorityModule += priority just for the running process
+			p->priorityModule += p->priority; 
+      c->proc = p;
+      // *** Our implementation ***
+      //p->ticksPassed = 0;
       //---------------------------
-      
       switchuvm(p);
       p->state = RUNNING;
-
       swtch(&(c->scheduler), p->context);
       switchkvm();
-
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      c->proc = 0;
+     // Process is done running for now.
+		 // It should have changed its p->state before coming back.
+		  c->proc = 0;
     }
     release(&ptable.lock);
 

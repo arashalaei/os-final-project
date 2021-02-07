@@ -1,5 +1,6 @@
 // Our defines
 #define NO_SYSCALL 64
+#define MIN_MODULO 9223372036854775807
 
 // Per-CPU state
 struct cpu {
@@ -55,7 +56,9 @@ struct proc {
 
   // Our property
   int sysCallCounter[NO_SYSCALL]; // An array to store the number of system calls
-  int ticksPassed;  // Number of ticks hit so far
+  int ticksPassed;             // Number of ticks hit so far
+  int priority;                // Indicates process priority.The lower the value, the higher the priority of the process
+  long long int priorityModule;          // Choses a process whose priorityModule is highest
 };
 
 // Process memory is laid out contiguously, low addresses first:

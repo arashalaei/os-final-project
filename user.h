@@ -26,7 +26,9 @@ int uptime(void);
 // Our system call ⬇️
 int getparentpid(void); 
 int getSyscallCounter(int);
-char *getChildren(int);
+int getChildren(int);
+int setPriority(int);
+
 // ulib.c
 int stat(const char*, struct stat*);
 char* strcpy(char*, const char*);

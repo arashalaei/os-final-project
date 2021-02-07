@@ -123,3 +123,21 @@ sys_getChildren(void){
   argint(0,&PID);
   return get_children(PID);
 }
+
+/*
+** @author Arash Alaei <arashalaei22@gmail.com>
+** @since Monday, February 7, 2021
+** @description Implement a system call that changes the priority of processes.
+*/
+int
+sys_setPriority(void){
+  int priority;
+  argint(0,&priority);
+  // If the priority is outside the range of 1 to 6, it should be known as 5.
+  if(priority < 1 || priority > 6) 
+    myproc()->priority = 5;
+  else
+    myproc()->priority = priority;
+
+  return 1;
+}
