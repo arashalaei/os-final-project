@@ -153,3 +153,15 @@ sys_changePolicy(void){
   argint(0,&policy);
   return change_policy(policy);
 }
+
+/*
+** @author Arash Alaei <arashalaei22@gmail.com>
+** @since Monday, February 8, 2021
+** @description Implement a system call that waits for all child of current process.
+*/
+int
+sys_waiting(void){
+	struct processTimes *PTV;
+  argptr(0, (void*)&PTV ,sizeof(*PTV));
+  return wait_for_child(PTV);
+}

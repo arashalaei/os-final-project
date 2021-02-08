@@ -9,6 +9,7 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
+struct processTimes;
 
 // bio.c
 void            binit(void);
@@ -120,7 +121,6 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
-int             getparentpid(void);
 // swtch.S
 void            swtch(struct context**, struct context*);
 
@@ -190,6 +190,8 @@ void            clearpteu(pde_t *pgdir, char *uva);
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
 
 // Our defs
+int             getparentpid(void);
 int             get_children(int);
 int             change_policy(int);
 void            updateProcessTimes(void);
+int             wait_for_child(struct processTimes* t);

@@ -662,3 +662,61 @@ updateProcessTimes(){
   }
   release(&ptable.lock);
 }
+
+// Helper functions
+void
+updateTimeProperty(struct proc *p,struct processTimes *t){
+  t->creationTime = p->creationTime;
+  t->readyTime = p->readyTime;
+  t->runningTime = p->runningTime;
+  t->sleepingTime = p->sleepingTime;
+  t->terminationTime = p->terminationTime; 
+}
+
+void
+setZeroProcessProperty(struct proc *p){
+  p->pid = 0;
+  p->parent = 0;
+  p->name[0] = 0;
+  p->killed = 0;
+  p->state = UNUSED;
+}
+
+/*
+** @author Arash Alaei <arashalaei22@gmail.com>
+** @since Monday, February 8, 2021
+** @description Implement a function that that waits for all child of current process.
+*/
+int
+wait_for_child(struct processTimes *t){
+  int flag, PID;
+  struct proc *currentProcess = myproc();
+  acquire(&ptable.lock);
+  while(1){
+    flag = 0; // this flag determines the existence of a child
+    for(struct proc *p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      // The current process has no children 
+      if(p->parent != currentProcess)
+        continue;
+      flag = 1; // Found one child.
+      if(p->state == ZOMBIE){
+        updateTimeProperty(p,t);
+
+        PID = p->pid;
+        kfree(p->kstack);
+        p->kstack = 0;
+        freevm(p->pgdir);
+        setZeroProcessProperty(p);
+        release(&ptable.lock);
+        return PID;
+      }
+    }
+
+    // We will not wait if there is no child or the process is killed.
+    if(currentProcess->killed || !flag){
+      release(&ptable.lock);
+      return -10;
+    }
+    sleep(currentProcess, &ptable.lock);  
+  }
+}

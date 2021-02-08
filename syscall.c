@@ -109,6 +109,7 @@ extern int sys_getSyscallCounter(void);
 extern int sys_getChildren(void);
 extern int sys_setPriority(void);
 extern int sys_changePolicy(void);
+extern int sys_waiting(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -133,11 +134,12 @@ static int (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 // Our system calls
-[SYS_getparentpid] sys_getparentpid,
+[SYS_getparentpid]      sys_getparentpid,
 [SYS_getSyscallCounter] sys_getSyscallCounter,
-[SYS_getChildren] sys_getChildren,
-[SYS_setPriority] sys_setPriority,
-[SYS_changePolicy] sys_changePolicy
+[SYS_getChildren]       sys_getChildren,
+[SYS_setPriority]       sys_setPriority,
+[SYS_changePolicy]      sys_changePolicy,
+[SYS_waiting]           sys_waiting
 };
 
 void

@@ -1,6 +1,7 @@
 struct stat;
 struct rtcdate;
-
+// Our struct
+struct processTimes;
 // system calls
 int fork(void);
 int exit(void) __attribute__((noreturn));
@@ -29,6 +30,7 @@ int getSyscallCounter(int);
 int getChildren(int);
 int setPriority(int);
 int changePolicy(int);
+int waiting(struct processTimes*);
 
 // ulib.c
 int stat(const char*, struct stat*);

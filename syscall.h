@@ -21,8 +21,9 @@
 #define SYS_mkdir  20
 #define SYS_close  21
 // Our defines
-#define SYS_getparentpid 22
-#define SYS_getSyscallCounter 23
-#define SYS_getChildren 24
-#define SYS_setPriority 25
-#define SYS_changePolicy 26
+#define SYS_getparentpid        22
+#define SYS_getSyscallCounter   23
+#define SYS_getChildren         24
+#define SYS_setPriority         25
+#define SYS_changePolicy        26
+#define SYS_waiting             27
