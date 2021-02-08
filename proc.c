@@ -363,35 +363,53 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-        continue;
-
-      // *** Our implementation ***
-      struct proc *HPP = p; // High Priority Process.
-      // Higher priority must be selected.
-      for(struct proc *pro = ptable.proc; pro < &ptable.proc[NPROC]; pro++){
-        if(pro->state != RUNNABLE)
+    if(SCHEDULING_POLICY == PRIORITY_SCHEDULING){
+      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+        if(p->state != RUNNABLE)
           continue;
-        if( HPP->priorityModule > pro->priorityModule  ) 
-          HPP = pro;
-      }
-      p = HPP;
-      // After each quantum, the algorithm updates the current priorityModule 
-      // as priorityModule += priority just for the running process
-			p->priorityModule += p->priority; 
-      c->proc = p;
-      // *** Our implementation ***
-      //p->ticksPassed = 0;
-      //---------------------------
-      switchuvm(p);
-      p->state = RUNNING;
-      swtch(&(c->scheduler), p->context);
-      switchkvm();
-     // Process is done running for now.
-		 // It should have changed its p->state before coming back.
-		  c->proc = 0;
+
+        // *** Our implementation ***
+        struct proc *HPP = p; // High Priority Process.
+        // Higher priority must be selected.
+        for(struct proc *pro = ptable.proc; pro < &ptable.proc[NPROC]; pro++){
+          if(pro->state != RUNNABLE)
+            continue;
+          if( HPP->priorityModule > pro->priorityModule  ) 
+            HPP = pro;
+        }
+        p = HPP;
+        // After each quantum, the algorithm updates the current priorityModule 
+        // as priorityModule += priority just for the running process
+        p->priorityModule += p->priority; 
+        c->proc = p;
+        switchuvm(p);
+        p->state = RUNNING;
+        swtch(&(c->scheduler), p->context);
+        switchkvm();
+        // Process is done running for now.
+        // It should have changed its p->state before coming back.
+        c->proc = 0;
     }
+  }else{// plocy == default
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+          if(p->state != RUNNABLE)
+            continue;
+          // Switch to chosen process.  It is the process's job	      
+          // to release ptable.lock and then reacquire it	      
+          // before jumping back to us.	      
+          c->proc = p;	      
+          // *** Our implementation ***
+          p->ticksPassed = 0;
+          // ---------------------------
+          switchuvm(p);	      
+          p->state = RUNNING;	     
+          swtch(&(c->scheduler), p->context);
+          switchkvm();
+          // Process is done running for now.
+          // It should have changed its p->state before coming back.
+          c->proc = 0;
+    }
+  }
     release(&ptable.lock);
 
   }
@@ -430,7 +448,7 @@ yield(void)
   // *** Our implementation ***
   myproc()->ticksPassed++;
   // if ticksPassed larger than time slot then context-switch is needed
-  if(myproc()->ticksPassed > QUANTUM){
+  if(SCHEDULING_POLICY == DEFAULT_SCHEDULING || ((myproc()->ticksPassed > QUANTUM) && (SCHEDULING_POLICY == MUTATE_DEFAULT_SCHEDULING))){
     myproc()->ticksPassed = 0; // Set to zero after context-switch
   //---------------------------
     acquire(&ptable.lock);  //DOC: yieldlock
