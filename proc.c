@@ -13,7 +13,9 @@ struct {
 } ptable;
 
 static struct proc *initproc;
-
+// *** Our implementation ***
+int SCHEDULING_POLICY = DEFAULT_SCHEDULING;
+// --------------------------
 int nextpid = 1;
 extern void forkret(void);
 extern void trapret(void);
@@ -600,4 +602,19 @@ get_children(int PID){
   }
   release(&ptable.lock);
   return children;
+}
+
+/*
+** @author Arash Alaei <arashalaei22@gmail.com>
+** @since Monday, February 8, 2021
+** @description Implement a function that changes the policy of scheduling algorithm..
+*/
+int
+change_policy(int policy){
+	if(policy > 2 || policy < 0) // If ploicy out of range [0,2] then set dafault policy.
+    SCHEDULING_POLICY = DEFAULT_SCHEDULING;
+  else
+    SCHEDULING_POLICY = policy;
+  // Just so that no error is displayed  
+	return 1;
 }

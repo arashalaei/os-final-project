@@ -25,3 +25,4 @@
 #define SYS_getSyscallCounter 23
 #define SYS_getChildren 24
 #define SYS_setPriority 25
+#define SYS_changePolicy 26

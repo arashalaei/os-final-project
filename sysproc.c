@@ -141,3 +141,15 @@ sys_setPriority(void){
 
   return 1;
 }
+
+/*
+** @author Arash Alaei <arashalaei22@gmail.com>
+** @since Monday, February 8, 2021
+** @description Implement a system call that changes the policy of scheduling algorithm.
+*/
+int
+sys_changePolicy(void){
+  int policy;
+  argint(0,&policy);
+  return change_policy(policy);
+}

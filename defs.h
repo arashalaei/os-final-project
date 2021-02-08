@@ -191,3 +191,4 @@ void            clearpteu(pde_t *pgdir, char *uva);
 
 // Our defs
 int             get_children(int);
+int             change_policy(int);

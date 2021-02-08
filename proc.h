@@ -1,6 +1,10 @@
 // Our defines
 #define NO_SYSCALL 64
 #define MIN_MODULO 9223372036854775807
+#define DEFAULT_SCHEDULING 0
+#define MUTATE_DEFAULT_SCHEDULING 1
+#define PRIORITY_SCHEDULING 2
+
 
 // Per-CPU state
 struct cpu {

@@ -28,6 +28,7 @@ int getparentpid(void);
 int getSyscallCounter(int);
 int getChildren(int);
 int setPriority(int);
+int changePolicy(int);
 
 // ulib.c
 int stat(const char*, struct stat*);
