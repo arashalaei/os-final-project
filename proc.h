@@ -63,6 +63,11 @@ struct proc {
   int ticksPassed;             // Number of ticks hit so far
   int priority;                // Indicates process priority.The lower the value, the higher the priority of the process
   long long int priorityModule;          // Choses a process whose priorityModule is highest
+  int creationTime;            
+  int terminationTime;
+  int runningTime;
+  int readyTime;
+  int sleepingTime;
 };
 
 // Process memory is laid out contiguously, low addresses first:

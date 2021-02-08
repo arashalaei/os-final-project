@@ -51,6 +51,10 @@ trap(struct trapframe *tf)
     if(cpuid() == 0){
       acquire(&tickslock);
       ticks++;
+      // *** Our implementation ***
+      // After each cpu tick each process times must be updated.
+      updateProcessTimes();
+      // --------------------------
       wakeup(&ticks);
       release(&tickslock);
     }

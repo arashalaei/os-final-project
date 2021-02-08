@@ -94,6 +94,12 @@ found:
 // *** Our implementation ***
   p->priority = 3; // Default process priority
 
+  p->creationTime = ticks;
+	p->terminationTime = 0;
+	p->sleepingTime = 0;
+	p->readyTime = 0;
+	p->runningTime = 0;
+
   struct proc *pro; // Process counter variable 
 	int minPriority;  // To update process module
   int flag = 0;     // Helper variable to indicate 
@@ -294,6 +300,10 @@ exit(void)
 
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
+  // *** Our implementation ***
+  // Set process termination time equal cpu ticks after exit.
+  myproc()->terminationTime = ticks;
+  // -------------------------------
   sched();
   panic("zombie exit");
 }
@@ -635,4 +645,20 @@ change_policy(int policy){
     SCHEDULING_POLICY = policy;
   // Just so that no error is displayed  
 	return 1;
+}
+
+/*
+** @author Arash Alaei <arashalaei22@gmail.com>
+** @since Monday, February 8, 2021
+** @description Implement a function that updates the times(ready, running , ...) of each process.
+*/
+void
+updateProcessTimes(){
+  acquire(&ptable.lock);
+  for (struct proc *p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if (p->state == RUNNABLE) p->readyTime++;
+    else if(p->state == RUNNING) p->runningTime++;
+    else if (p->state == SLEEPING) p->sleepingTime++;
+  }
+  release(&ptable.lock);
 }
