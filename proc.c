@@ -7,6 +7,12 @@
 #include "proc.h"
 #include "spinlock.h"
 
+#define PRIORITY_DEFAULT 10
+#define PRIORITY_PRIORITYSCHED 7
+#define PRIORITY_REVERSEPRIORITYSCHED 4
+#define PRIORITY_RR 1
+
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -352,6 +358,60 @@ wait(void)
   }
 }
 
+ // *** Our implementation ***
+int 
+mlq(void)
+{
+   struct proc *p;
+    int exec_proc = -1;
+    int minref = ticks;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
+        if (p->state == RUNNABLE && p->priority == PRIORITY_DEFAULT){
+            exec_proc = p->pid;
+        }
+    }
+    if (exec_proc == -1){
+        for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+            if(p->state == RUNNABLE && p->priority == PRIORITY_PRIORITYSCHED){
+                 
+                 struct proc *HPP = p; // High Priority Process.
+              // Higher priority must be selected.
+              for(struct proc *pro = ptable.proc; pro < &ptable.proc[NPROC]; pro++){
+              if(pro->state != RUNNABLE)
+              continue;
+              if( HPP->priorityModule > pro->priorityModule  ) 
+              HPP = pro;
+        }
+        p = HPP;
+        // After each quantum, the algorithm updates the current priorityModule 
+        // as priorityModule += priority just for the running process
+        p->priorityModule += p->priority; 
+        exec_proc = p -> pid;
+            }   
+        }
+    }
+    if (exec_proc == -1){
+        for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+            if(p->state == RUNNABLE && p->priority == PRIORITY_REVERSEPRIORITYSCHED){
+              
+                    exec_proc = p->pid;
+            }   
+        }
+    }
+    if (exec_proc == -1){
+        for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
+            if (p->state == RUNNABLE && p->priority == PRIORITY_RR){
+                exec_proc = p->pid;
+            }
+        }
+    }
+    return exec_proc;
+}
+
+
+ // ---------------------------
+
+
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -366,6 +426,7 @@ scheduler(void)
   struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
+  int my_pid = -1;
   
   for(;;){
     // Enable interrupts on this processor.
@@ -400,7 +461,26 @@ scheduler(void)
         // It should have changed its p->state before coming back.
         c->proc = 0;
     }
-  }else{// plocy == default
+  }else if(SCHEDULING_POLICY == MLQ_SCHEDULING){
+          my_pid = mlq();
+          for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+            if(p->state != my_pid)
+              continue;
+            
+             c->proc = p;
+        switchuvm(p);
+        p->state = RUNNING;
+        swtch(&(c->scheduler), p->context);
+        switchkvm();
+
+        // Process is done running for now.
+        // It should have changed its p->state before coming back.
+        c->proc = 0;
+        }
+  }
+  
+  
+  else{// policy == default
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
           if(p->state != RUNNABLE)
             continue;
