@@ -9,7 +9,7 @@
 
 #define PRIORITY_DEFAULT 10
 #define PRIORITY_PRIORITYSCHED 7
-#define PRIORITY_REVERSEPRIORITYSCHED 4
+#define PRIORITY_REVERSEDPRIORITYSCHED 4
 #define PRIORITY_RR 1
 
 
@@ -363,8 +363,8 @@ int
 mlq(void)
 {
    struct proc *p;
+    struct proc *HPP = p; // High Priority Process.
     int exec_proc = -1;
-    int minref = ticks;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
         if (p->state == RUNNABLE && p->priority == PRIORITY_DEFAULT){
             exec_proc = p->pid;
@@ -373,9 +373,7 @@ mlq(void)
     if (exec_proc == -1){
         for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
             if(p->state == RUNNABLE && p->priority == PRIORITY_PRIORITYSCHED){
-                 
-                 struct proc *HPP = p; // High Priority Process.
-              // Higher priority must be selected.
+            // Higher priority must be selected.
               for(struct proc *pro = ptable.proc; pro < &ptable.proc[NPROC]; pro++){
               if(pro->state != RUNNABLE)
               continue;
@@ -392,8 +390,17 @@ mlq(void)
     }
     if (exec_proc == -1){
         for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-            if(p->state == RUNNABLE && p->priority == PRIORITY_REVERSEPRIORITYSCHED){
-              
+            if(p->state == RUNNABLE && p->priority == PRIORITY_REVERSEDPRIORITYSCHED){
+                for(struct proc *pro = ptable.proc; pro < &ptable.proc[NPROC]; pro++){
+              if(pro->state != RUNNABLE)
+                continue;
+              if( HPP->priorityModule < pro->priorityModule  ) 
+                  HPP = pro;
+                }
+                p = HPP;
+                // After each quantum, the algorithm updates the current priorityModule 
+                // as priorityModule += priority just for the running process
+                p->priorityModule += p->priority; 
                     exec_proc = p->pid;
             }   
         }
