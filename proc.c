@@ -363,7 +363,6 @@ int
 mlq(void)
 {
    struct proc *p;
-    struct proc *HPP = p; // High Priority Process.
     int exec_proc = -1;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
         if (p->state == RUNNABLE && p->priority == PRIORITY_DEFAULT){
@@ -373,6 +372,7 @@ mlq(void)
     if (exec_proc == -1){
         for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
             if(p->state == RUNNABLE && p->priority == PRIORITY_PRIORITYSCHED){
+            struct proc *HPP = p; // High Priority Process.
             // Higher priority must be selected.
               for(struct proc *pro = ptable.proc; pro < &ptable.proc[NPROC]; pro++){
               if(pro->state != RUNNABLE)
@@ -391,6 +391,7 @@ mlq(void)
     if (exec_proc == -1){
         for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
             if(p->state == RUNNABLE && p->priority == PRIORITY_REVERSEDPRIORITYSCHED){
+                 struct proc *HPP = p; // High Priority Process.
                 for(struct proc *pro = ptable.proc; pro < &ptable.proc[NPROC]; pro++){
               if(pro->state != RUNNABLE)
                 continue;
