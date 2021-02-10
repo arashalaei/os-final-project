@@ -31,6 +31,7 @@ int getChildren(int);
 int setPriority(int);
 int changePolicy(int);
 int waiting(struct processTimes*);
+int changeQueue(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

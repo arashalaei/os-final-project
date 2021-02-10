@@ -186,6 +186,7 @@ UPROGS=\
 	_getChildrenTest\
 	_roundRobinTest\
 	_prioritySchedTest\
+	_mlqTest\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -260,6 +261,7 @@ EXTRA=\
 	getChildrenTest.c\
 	roundRobinTest.c\
 	prioritySchedTest.c\
+	mlqTest.c\
 	printf.c umalloc.c\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\

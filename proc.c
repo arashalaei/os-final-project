@@ -359,6 +359,29 @@ wait(void)
 }
 
  // *** Our implementation ***
+int
+changeQueue(){
+     struct proc *p = p;
+     if(p){
+        if (p->priority == PRIORITY_DEFAULT){
+            p->priority = PRIORITY_PRIORITYSCHED;
+            return 0;
+        } else if (p->priority == PRIORITY_PRIORITYSCHED) {
+            p->priority = PRIORITY_REVERSEDPRIORITYSCHED;
+            return 0;
+        }    
+            else if (p->priority == PRIORITY_REVERSEDPRIORITYSCHED) {
+            p->priority = PRIORITY_RR;
+            return 0;
+        } else if (p->priority == PRIORITY_RR){
+            return -1;
+        }
+}
+    return -1;
+}
+
+
+
 int 
 mlq(void)
 {

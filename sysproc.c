@@ -165,3 +165,9 @@ sys_waiting(void){
   argptr(0, (void*)&PTV ,sizeof(*PTV));
   return wait_for_child(PTV);
 }
+
+int
+sys_changeQueue(void){
+    int res = changeQueue();
+    return res;
+}

@@ -195,3 +195,4 @@ int             get_children(int);
 int             change_policy(int);
 void            updateProcessTimes(void);
 int             wait_for_child(struct processTimes* t);
+int             changeQueue(void);
