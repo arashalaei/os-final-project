@@ -495,7 +495,7 @@ scheduler(void)
   }else if(SCHEDULING_POLICY == MLQ_SCHEDULING){
           my_pid = mlq();
           for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-            if(p->state != my_pid)
+            if(p->pid != my_pid)
               continue;
             
              c->proc = p;
